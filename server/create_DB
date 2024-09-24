@@ -1,0 +1,5 @@
+const mongo = require('mongodb');
+const dotenv = require('dotenv');
+dotenv.config();
+
+//--##--##--##--##--## Connecting to the database (mongo)
