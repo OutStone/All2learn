@@ -39,6 +39,12 @@ function MyForm() {
     console.log(data)
     
     axios.post('http://localhost:3000/form',data)
+      .then( (res) => {
+      console.log(res);
+    })
+      .catch( (err) => {
+      console.log(err);
+    });
   }
 
   // The HTML code
