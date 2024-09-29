@@ -1,13 +1,21 @@
 // getting the HTML code of a page containing the img we want and parsing it
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const { parse } = require('node-html-parser');
+const EventEmitter = require('node:events');
+const notifier = new EventEmitter();
 
-getHTML = (url) => {
+getHTML = async (name) => {
+    console.log("a")
+    name = name.replace(' ', '+')
+    var url = encodeURI('https://www.naturfoto.cz/vyhledat/?retezec_search=' + name + '&hledat.x=0&hledat.y=0&photoid=')
     var xhr  = new XMLHttpRequest()
     const options = {
         method: 'GET',
         url: url
     };
+
+    console.log(options.url)
+    console.log('\n')
 
       xhr.open(options.method, options.url);
       xhr.send(null);
@@ -22,6 +30,7 @@ getHTML = (url) => {
 
             if (imgs.length == 0) { // nejsou zadne fotky - asi chyba ||| TODO: response with a error msg       
                 console.warn("length: " + imgs.length);
+                notifier.emit(name.replace('+', ' '),null)
                 return;
             }
 
@@ -29,7 +38,8 @@ getHTML = (url) => {
             console.warn("chosen " + index + " of " + imgs.length)
 
             ImgSrc = parseAttrs(imgs[index].rawAttrs,"src")
-            console.log(ImgSrc)
+            console.log(name + " a ten obrazek " + ImgSrc)
+            notifier.emit(name.replace('+', ' '),ImgSrc)
         }
       })
 }
@@ -48,4 +58,4 @@ parseAttrs = (str, param) => { // parses a value of a specific attribute
     return result;
 }
 
-module.exports = {getHTML,parseAttrs}
+module.exports = {getHTML,parseAttrs,notifier}

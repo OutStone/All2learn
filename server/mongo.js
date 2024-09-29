@@ -1,17 +1,40 @@
-const MongoClient = require('mongodb').MongoClient;
-
+const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv');
 dotenv.config();
 
-MongoClient.connect(process.env.MONGO_URL, function(err, db) {
-  if (err) throw err;
+// Connection URL
+const url = process.env.MONGO_URL;
+const client = new MongoClient(url);
 
-  var dbo = db.db(process.env.MONGO_DB);
+// Database Name
+const dbName = process.env.MONGO_DB;
 
-  dbo.createCollection( "biology" , (err, res) => {
-    if (err) throw err;
+async function main() {
 
-    console.log("Collection created!");
-    db.close();
-  });
-});
+  // connect method to connect to the server
+  await client.connect();
+  console.log('Connected successfully to server');
+
+  const db = client.db(dbName);
+  const collection = db.collection('biology');
+
+  // writing some data so the DB will realy be created
+  const data = [{
+      _id : 0,
+      list : ["kozák březový"],
+      imgs : [],
+      user : null
+  }]
+
+  const result = await collection.insertMany(data)
+
+  console.log(result)
+  client.close()
+
+  return 'done.';
+}
+
+main()
+  .then(console.log)
+  .catch(console.error)
+  .finally(() => client.close());
