@@ -1,5 +1,0 @@
-# dependencies
-/node_modules
-
-# logins & names
-.env
